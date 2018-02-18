@@ -1,15 +1,24 @@
-DROP DATABASE IF EXISTS bamazon;
-CREATE DATABASE bamazon;
-USE bamazon;
+DROP DATABASE IF EXISTS bamazonDB;
+CREATE DATABASE bamazonDB;
+USE bamazonDB;
 
 CREATE TABLE products (
-	id INTEGER(10) AUTO_INCREMENT NOT NULL,
-    PRIMARY KEY(id),
+	id INT(10) AUTO_INCREMENT NOT NULL,
+    PRIMARY KEY (id),
     product_name VARCHAR(50),
     department_name VARCHAR(50),
 	price DECIMAL(7,2),
-    stock_quantity INTEGER(5)
+    stock_quantity INT(5),
+    product_sales DECIMAL(10,2) DEFAULT 0
 );
+
+CREATE TABLE departments (
+	department_id INT(10) AUTO_INCREMENT NOT NULL,
+    PRIMARY KEY (department_id),
+    department_name VARCHAR(50),
+    overhead_costs DECIMAL(10,2)
+);
+    
 
 INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES
 	("10' XLR", "Cables", "12.99", "57"),
@@ -23,8 +32,3 @@ INSERT INTO products (product_name, department_name, price, stock_quantity) VALU
     ("dbx 231", "Signal Processors", "299.95", "15"),
     ("Pioneer DDJ-SX2", "DJ Gear", "999.00", "4"),
     ("Sennheiser HD280", "Headphones", "99.95", "17");
-
-
-
-
-    

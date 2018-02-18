@@ -35,7 +35,7 @@ con.connect(function(err) {
       if (answer.units > inventory[answer.requestID-1].stock_quantity) {
         console.log("Sorry, we don't have enough of those in stock!");
       } else {
-        con.query(`UPDATE products SET stock_quantity = ${inventory[answer.requestID-1].stock_quantity - answer.units} WHERE id = ${answer.requestID}`, function (err, result) {
+        con.query(`UPDATE products SET stock_quantity = ${inventory[answer.requestID-1].stock_quantity - answer.units}, product_sales = ${inventory[answer.requestID-1].product_sales + answer.units * inventory[answer.requestID-1].price} WHERE id = ${answer.requestID}`, function (err, result) {
           if (err) throw err;
           console.log(`Thank you!\nYour cost is $${inventory[answer.requestID-1].price * answer.units}`);
         })
