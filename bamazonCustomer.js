@@ -31,36 +31,45 @@ function customerFunction() {
       {
         name: "units",
         message: "How many would you like?"
+        // validate: function(str) {
+        //   return parseInt(str) !== NaN;
+        // }
       }
     ]).then(function(answer) {
-      var query = "SELECT id, ";
-      query += "stock_quantity, ";
-      query += "price, ";
-      query += "product_sales ";
-      query += "FROM products "
-      query += `WHERE id = ${answer.requestID};`
-      con.query(query, function(err, res) {
-        if (err) throw err;
-        if (answer.units > res[0].stock_quantity) {
-          console.log("\nSorry, we don't have enough of those in stock!\n");
-        } else {
-          var query = `UPDATE products `;
-          query += "SET stock_quantity = ?, ";
-          query += "product_sales = ? ";
-          query += "WHERE id = ?;";
-          con.query(query, 
-            [
-              res[0].stock_quantity - answer.units, 
-              res[0].product_sales + answer.units * res[0].price, 
-              answer.requestID
-            ], 
-            function (err, result) {
-            if (err) throw err;
-            console.log(`\nThank you!\nYour cost is $${res[0].price * answer.units}\n`);
-          })
-        }
-        con.end();
-      })
+      if (answer.requestID > res.length || answer.requestID === "0") {
+        console.log("\nPlease select a valid ID number!");
+        customerFunction();
+      } else {
+        var query = "SELECT id, ";
+        query += "stock_quantity, ";
+        query += "price, ";
+        query += "product_sales ";
+        query += "FROM products "
+        query += `WHERE id = ${answer.requestID};`
+        con.query(query, function(err, res) {
+          if (err) throw err;
+          if (answer.units > res[0].stock_quantity) {
+            console.log("\nSorry, we don't have enough of those in stock!\n");
+          } else {
+            var query = `UPDATE products `;
+            query += "SET stock_quantity = ?, ";
+            query += "product_sales = ? ";
+            query += "WHERE id = ?;";
+            con.query(query, 
+              [
+                res[0].stock_quantity - answer.units, 
+                res[0].product_sales + answer.units * res[0].price, 
+                answer.requestID
+              ], 
+              function (err, result) {
+              if (err) throw err;
+              var cost = res[0].price * answer.units;
+              console.log(`\nThank you!\nYour cost is $${cost.toFixed(2)}\n`);
+            })
+          }
+          con.end();
+        })
+      }
     })
   });
 }

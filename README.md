@@ -15,9 +15,9 @@ The user is presented with a list of products with their price and availability.
 `node bamazonManager`
 
 The user is presented with list of options.
-- "View Products for Sale" will display a list all products, including department, stock, and sales information.
+- "View Products for Sale" will display a list of all products, including department, stock, and sales information.
 - "View Low Inventory" will display a list of all products whose inventory count is less than 5.
-- "Add New Product" will allow the user to choose a product by ID number and increase its stock quantity.
+- "Add to Inventory" will allow the user to choose a product by ID number and increase its stock quantity.
 - "Add New Product" will allow the user to add a new product by specifying item name, department, unit price, and initial stock quantity.
 
 ### bamazonSupervisor
