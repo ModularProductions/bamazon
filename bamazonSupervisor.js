@@ -74,7 +74,7 @@ function createDepartment() {
         name: "overhead",
         message: "What is the overhead cost?",
         validate: function(str) {
-          if (Number.isInteger(parseFloat(str)*100) && str >= 0) {
+          if (Number.isInteger(Math.round(parseFloat(str)*100)) && str >= 0) {
             return true;
           }
         }

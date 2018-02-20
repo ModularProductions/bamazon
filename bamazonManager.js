@@ -95,8 +95,8 @@ function addInventory() {
         query += "id, ";
         query += "product_name, ";
         query += "stock_quantity ";
-      query += "FROM products ";
-      query += "WHERE id = ?;";
+        query += "FROM products ";
+        query += "WHERE id = ?;";
       con.query(query, [answer.itemNumber], function(err, res) {
         var itemStocked = { name : res[0].product_name, stock : parseInt(res[0].stock_quantity) };
         if (err) throw err;
@@ -108,7 +108,6 @@ function addInventory() {
           function(err, res) {
             if (err) throw err;
             itemStocked.stock += parseInt(answer.quantity);
-            // console.log("post update res =", res);
             console.log(`\n${itemStocked.name}s added. New unit count: ${itemStocked.stock}\n`);
             managerFunction();
           }
@@ -119,12 +118,23 @@ function addInventory() {
 }
 
 function addProduct() {
-  con.query("SELECT department_name, product_name FROM departments;", function(err, res) {
+  query = "SELECT departments.department_name, ";
+    query += "products.product_name ";
+    query += "FROM products ";
+    query += "LEFT JOIN departments ON products.department_name = departments.department_name ";
+    query += "UNION ";
+    query += "SELECT departments.department_name, ";
+    query += "products.product_name ";
+    query += "FROM products ";
+    query += "RIGHT JOIN departments ON products.department_name = departments.department_name ";
+  con.query(query, function(err, res) {
     if (err) throw err;
     var departments = [];
     res.forEach(function(data) {
-      departments.push(data.department_name);
-    })
+      if (!departments.find(function(ele) {return ele == data.department_name})) {
+        departments.push(data.department_name);
+      }
+    });
     inquirer.prompt([
       {
         name: "productName",
@@ -139,13 +149,13 @@ function addProduct() {
         type: "list",
         name: "department",
         message: "What department?",
-        choices: departments
+        choices: departments.sort()
       },
       {
         name: "price",
         message: "What is the unit price?",
         validate: function(str) {
-          if (Number.isInteger(parseFloat(str)*100) && str >= 0) {
+          if (Number.isInteger(Math.round(parseFloat(str)*100)) && str >= 0) {
             return true;
           }
         }
