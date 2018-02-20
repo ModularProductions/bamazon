@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var cTable = require("console.table");
 
 var con = mysql.createConnection({
   host: "localhost",
@@ -10,7 +11,6 @@ var con = mysql.createConnection({
 });
 
 function managerFunction() {
-  console.log("");
   inquirer.prompt([
     {
       type: "list",
@@ -38,36 +38,31 @@ function managerFunction() {
       case "Add New Product" :
         addProduct();
         break;
-      case "Exit" : console.log(""); con.end(); break;
+      case "Exit" : console.log("");
+        con.end();
+        break;
     }
   })
 }
 
 function viewInventory() {
-  con.query("SELECT * FROM products", function (err, result) {
+  con.query("SELECT * FROM products", function (err, res) {
     if (err) throw err;
     console.log("");
-    result.forEach(function(item) {
-      console.log(`${item.id} | ${item.product_name}   $${item.price}, ${item.stock_quantity}`);
-    })
+    console.table(res);
     managerFunction();
   });
 }
 
 function viewLowInventory() {
-  con.query("SELECT * FROM products", function (err, result) {
+  con.query("SELECT * FROM products WHERE stock_quantity < 5", function (err, res) {
     if (err) throw err;
-    var lowInv = false;
-    console.log("");
-    result.forEach(function(item) {
-      if (item.stock_quantity < 5) {
-        console.log(`${item.id} | ${item.product_name}   $${item.price}, ${item.stock_quantity}`);
-        lowInv = true;
-      }
-    })
-    if (!lowInv) {
+    if (res.length === 0) {
       console.log("No low inventory to report.");
       console.log("");
+    } else {
+      console.log("");
+      console.table(res);
     }
     managerFunction();
   });
@@ -84,24 +79,28 @@ function addInventory() {
       message: "How many added to stock?"
     }
   ]).then(function(answer) {
-    var itemStocked = { id: answer.itemNumber };
-    con.query(`SELECT id, product_name, stock_quantity FROM products`, function(err, result) {
+    var query = "SELECT ";
+      query += "id, ";
+      query += "product_name, ";
+      query += "stock_quantity ";
+    query += "FROM products ";
+    query += "WHERE id = ?;";
+    con.query(query, [answer.itemNumber], function(err, res) {
+      var itemStocked = { name : res[0].product_name, stock : parseInt(res[0].stock_quantity) };
       if (err) throw err;
-      itemStocked.name = result[answer.itemNumber-1].product_name;
-      itemStocked.quantity = p;
-      con.query("UPDATE products SET ? WHERE ?", 
+      con.query("UPDATE products SET stock_quantity = ? WHERE id = ?", 
         [
-          {
-            stock_quantity : itemStocked.quantity
-          },
-          {
-            id : answer.itemNumber
-          }
-        ], function(err, result) {
-        if (err) throw err;
-        console.log(`\n${itemStocked.name}s added. New unit count: ${itemStocked.quantity}`);
-        managerFunction();
-      })
+          parseInt(res[0].stock_quantity) + parseInt(answer.quantity), 
+          answer.itemNumber
+        ], 
+        function(err, res) {
+          if (err) throw err;
+          itemStocked.stock += parseInt(answer.quantity);
+          // console.log("post update res =", res);
+          console.log(`\n${itemStocked.name}s added. New unit count: ${itemStocked.stock}\n`);
+          managerFunction();
+        }
+      )
     })
   })
 }
@@ -127,7 +126,7 @@ function addProduct() {
   ]).then(function(answer) {
     con.query(`INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES ('${answer.productName}', '${answer.departmentName}', '${answer.price}', '${answer.quantity}');`, function (err, result) {
       if (err) throw err;
-      console.log("\nNew item added!");
+      console.log("\nNew item added!\n");
       managerFunction();
     });
   })
@@ -135,6 +134,6 @@ function addProduct() {
 
 con.connect(function(err) {
   if (err) throw err;
-  console.log("Connected!");
+  console.log("");
   managerFunction();
 })
