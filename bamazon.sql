@@ -51,6 +51,6 @@ UPDATE products SET product_sales = "149.95" WHERE id = 6;
 UPDATE products SET product_sales = "999.00" WHERE id = 10;
 UPDATE products SET product_sales = "199.90" WHERE id = 11;
 
-SELECT * FROM products;
-#SELECT * FROM departments;
+#SELECT * FROM products;
+SELECT * FROM departments;
 

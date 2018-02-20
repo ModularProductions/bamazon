@@ -106,29 +106,40 @@ function addInventory() {
 }
 
 function addProduct() {
-  inquirer.prompt([
-    {
-      name: "productName",
-      message: "What is the product name?"
-    },
-    {
-      name: "departmentName",
-      message: "What department?"
-    },
-    {
-      name: "price",
-      message: "What is the unit price?"
-    },
-    {
-      name: "quantity",
-      message: "How many being stocked?"
-    }
-  ]).then(function(answer) {
-    con.query(`INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES ('${answer.productName}', '${answer.departmentName}', '${answer.price}', '${answer.quantity}');`, function (err, result) {
-      if (err) throw err;
-      console.log("\nNew item added!\n");
-      managerFunction();
-    });
+  con.query("SELECT department_name FROM departments", function(err, res) {
+    if (err) throw err;
+    var departments = [];
+    console.log("res =", res);
+    res.forEach(function(data) {
+      departments.push(data.department_name);
+    })
+    console.log("departments = ", departments);
+    inquirer.prompt([
+      {
+        name: "productName",
+        message: "What is the product name?"
+      },
+      {
+        type: "list",
+        name: "department",
+        message: "What department?",
+        choices: departments
+      },
+      {
+        name: "price",
+        message: "What is the unit price?"
+      },
+      {
+        name: "quantity",
+        message: "How many being stocked?"
+      }
+    ]).then(function(answer) {
+      con.query(`INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES ('${answer.productName}', '${answer.department}', '${answer.price}', '${answer.quantity}');`, function (err, result) {
+        if (err) throw err;
+        console.log("\nNew item added!\n");
+        managerFunction();
+      });
+    })    
   })
 }
 
