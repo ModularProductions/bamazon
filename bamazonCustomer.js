@@ -26,18 +26,25 @@ function customerFunction() {
     inquirer.prompt([
       {
         name: "requestID",
-        message: "What item number would you like to buy?"
+        message: "What item number would you like to buy?",
+        validate: function(str) {
+          if (res.find(function(ele) {return ele.id == str;}) !== undefined) {
+            return true;
+          }
+        }
       },
       {
         name: "units",
-        message: "How many would you like?"
-        // validate: function(str) {
-        //   return parseInt(str) !== NaN;
-        // }
+        message: "Please enter a number to purchase, or '0' for none.",
+        validate: function(str) {
+          if (Number.isInteger(parseFloat(str)) && str >= 0) {
+            return true;
+          }
+        }
       }
     ]).then(function(answer) {
       if (answer.requestID > res.length || answer.requestID === "0") {
-        console.log("\nPlease select a valid ID number!");
+        console.log("\nThere is no product at that ID number.");
         customerFunction();
       } else {
         var query = "SELECT id, ";

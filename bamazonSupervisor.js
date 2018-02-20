@@ -58,21 +58,34 @@ function viewSales() {
 
 function createDepartment() {
   console.log("");
-  inquirer.prompt([
-    {
-      name: "departmentName",
-      message: "What is the department name?"
-    },
-    {
-      name: "overhead",
-      message: "What is the overhead cost?"
-    }
-  ]).then(function(answer) {
-    con.query(`INSERT INTO departments (department_name,overhead_costs) VALUES ('${answer.departmentName}', '${answer.overhead}');`, function (err, result) {
-      if (err) throw err;
-      console.log("\nNew department added!\n");
-      supervisorFunction();
-    });
+  con.query("SELECT * FROM departments;", function(err, res) {
+    if (err) throw err;
+    inquirer.prompt([
+      {
+        name: "departmentName",
+        message: "What is the department name?",
+        validate: function(str) {
+          if (res.find(function(ele) {return ele.department_name == str;}) == undefined && str !== "") {
+            return true;
+          }
+        }
+      },
+      {
+        name: "overhead",
+        message: "What is the overhead cost?",
+        validate: function(str) {
+          if (Number.isInteger(parseFloat(str)*100) && str >= 0) {
+            return true;
+          }
+        }
+      }
+    ]).then(function(answer) {
+      con.query(`INSERT INTO departments (department_name,overhead_costs) VALUES ('${answer.departmentName}', '${answer.overhead}');`, function (err, result) {
+        if (err) throw err;
+        console.log("\nNew department added!\n");
+        supervisorFunction();
+      });
+    })
   })
 }
 
