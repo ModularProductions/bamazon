@@ -46,7 +46,7 @@ function managerFunction() {
 }
 
 function viewInventory() {
-  con.query("SELECT * FROM products;", function (err, res) {
+  con.query("SELECT *, FORMAT(price, 2) AS price, FORMAT(product_sales, 2) AS product_sales FROM products;", function (err, res) {
     if (err) throw err;
     console.log("");
     console.table(res);
@@ -55,7 +55,7 @@ function viewInventory() {
 }
 
 function viewLowInventory() {
-  con.query("SELECT * FROM products WHERE stock_quantity < 5;", function (err, res) {
+  con.query("SELECT *, FORMAT(price, 2) AS price, FORMAT(product_sales, 2) AS product_sales FROM products WHERE stock_quantity < 5;", function (err, res) {
     if (err) throw err;
     if (res.length === 0) {
       console.log("No low inventory to report.");

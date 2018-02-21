@@ -42,9 +42,9 @@ function viewSales() {
   console.log("");
   var query = "SELECT departments.department_id, ";
   query += "departments.department_name, ";
-  query += "FORMAT(departments.overhead_costs,2) AS overhead_costs, ";
-  query += "FORMAT(SUM(IFNULL(products.product_sales,0)),2) AS product_sales, ";
-  query += "FORMAT(SUM(IFNULL(products.product_sales,0))-overhead_costs,2) AS total_profit ";
+  query += "FORMAT(departments.overhead_costs, 2) AS overhead_costs, ";
+  query += "FORMAT(SUM(IFNULL(products.product_sales,0)), 2) AS product_sales, ";
+  query += "FORMAT(SUM(IFNULL(products.product_sales,0))-overhead_costs, 2) AS total_profit ";
   query += "FROM departments ";
   query += "LEFT JOIN products ON departments.department_name = products.department_name ";
   query += "GROUP BY departments.department_name ";
