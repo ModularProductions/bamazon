@@ -8,13 +8,13 @@ The database may be initialized with `bamazon.sql`, populating it with a few ite
 
 ### bamazonCustomer
 `node bamazonCustomer`
-
+![bamazonCustomer interface](assets/images/bamazonCustomer.png)
 The user is presented with a list of products with their price and availability. The user is then asked for the ID number of the desired product, and how many the user would like to purchase. Upon successful completion, the user is returned the total cost of their order, and the item's inventory quantity is updated. If there is not enough inventory to cover the purchase, it is rejected.
 - Validates for available ID number and purchase quantity.
 
 ### bamazonManager
 `node bamazonManager`
-
+![bamazonManager interface](assets/images/bamazonManager.png)
 The user is presented with list of options.
 - "View Products for Sale" will display a list of all products, including department, stock, and sales information.
 - "View Low Inventory" will display a list of all products whose inventory count is less than 5.
@@ -23,6 +23,7 @@ The user is presented with list of options.
 
 ### bamazonSupervisor
 `node bamazonSupervisor`
+![bamazonSupervisor interface](assets/images/bamazonSupervisor.png)
 
 The user is presented with a list of options.
 - "View Product Sales By Department" will display all departments, along with their overhead costs, total sales amount of all products in that department, and the total profit of the department (a deduction of the department's overhead from its product sales). Total profit is calculated inside query.
